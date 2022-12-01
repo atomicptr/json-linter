@@ -31,4 +31,4 @@ jobs:
           make build
           make install
           which json-linter
-          json-linter --version
+          json-linter --help
