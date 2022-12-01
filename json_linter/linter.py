@@ -77,17 +77,21 @@ def fix(files: List[Path], config: LinterConfig = DEFAULT_CONFIG) -> None:
 def fix_file(file_path: Path, config: LinterConfig = DEFAULT_CONFIG) -> None:
     """ Fix a single file """
     data = file_path.read_text()
+    file_path.write_text(
+        apply_fixes(data, config),
+        encoding="utf8",
+    )
 
+
+def apply_fixes(data: str, config: LinterConfig = DEFAULT_CONFIG) -> str:
+    """ Apply fixes to a string and return it """
     for fixer in get_all_fixers():
         data = fixer(data, config)
 
     obj = json.loads(data)
 
-    file_path.write_text(
-        json.dumps(
-            obj,
-            indent=config.indent,
-            sort_keys=True,
-        ),
-        encoding="utf8",
+    return json.dumps(
+        obj,
+        indent=config.indent,
+        sort_keys=True,
     )
