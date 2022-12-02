@@ -2,7 +2,7 @@
 from importlib import import_module
 from pathlib import Path
 from types import ModuleType
-from typing import List
+from typing import List, Dict
 
 COLOR_GREEN = "\033[92m"
 COLOR_RED = "\033[91m"
@@ -38,3 +38,22 @@ def get_modules_next_to_file(file: str, package: str) -> List[ModuleType]:
         modules.append(import_module(f".{module_name}", package))
 
     return modules
+
+
+def parse_var(string: str) -> (str, str):
+    """ Parses a key value pair """
+    items = string.split("=")
+    key = items[0].strip()
+    value = None
+    if len(items) > 1:
+        value = "=".join(items[1:])
+    return key, value
+
+
+def parse_vars(items: List[str]) -> Dict[str, str]:
+    """ Parse a list of key value pairs"""
+    result = {}
+    for item in items:
+        key, value = parse_var(item)
+        result[key] = value
+    return result

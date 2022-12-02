@@ -43,6 +43,17 @@ def lint_file(
     """ Lint a single file """
     data = file_path.read_text(encoding=config.encoding)
 
+    try:
+        json_data = json.loads(data)
+    except Exception as err:
+        return [LinterResult(
+            name="lint_file",
+            path=str(file_path.relative_to(Path.cwd())),
+            was_successful=False,
+            error_message=f"{type(err).__name__}: {str(err)}",
+            was_exception=True,
+        )]
+
     results = []
 
     for rule in get_all_rules():
@@ -55,7 +66,7 @@ def lint_file(
         )
 
         try:
-            success, message = rule(data, config)
+            success, message = rule(json_data, config)
             if not success:
                 res.was_successful = success
                 res.error_message = message

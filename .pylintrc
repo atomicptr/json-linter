@@ -2,4 +2,4 @@
 init-hook='import sys; sys.path.append("json_linter")'
 
 [MESSAGES CONTROL]
-disable=broad-except
+disable=broad-except,too-many-locals,too-many-branches

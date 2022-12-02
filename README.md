@@ -5,6 +5,7 @@ Lint your JSON files!
 ## Features
 
 * Check if keys are sorted alphabetically...
+* Check if your keys are either in camelCase, snake\_case or kebab-case...
 * ...and automatically fix (some) of these issues!
 
 ## Install
@@ -51,6 +52,9 @@ $ json-linter files -r --extensions cfg config
 # Fix files (will overwrite the file with a fixed version and then lint)
 $ json-linter my-file.json --fix
 + my-file.json
+
+# Overwrite configuration values
+$ json-linter my-file.json --config-set naming_style=KEBAB_CASE indent=2
 ```
 
 ## License

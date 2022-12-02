@@ -1,11 +1,14 @@
 """ CLI for json_linter """
 import argparse
 import sys
+from dataclasses import fields
 from typing import List, Dict
 
+from json_linter.config import LinterConfig
 from json_linter.files import gather_files
-from json_linter.linter import fix, lint, LinterResult
-from json_linter.utils import flatten, COLOR_RED, COLOR_GREEN, COLOR_RESET
+from json_linter.linter import fix, lint, LinterResult, DEFAULT_CONFIG
+from json_linter.utils import flatten, COLOR_RED, COLOR_GREEN, COLOR_RESET, \
+    parse_vars
 
 
 def main():
@@ -49,6 +52,18 @@ def main():
         help="fix and format files",
         action="store_true"
     )
+    config_options_str = ", ".join(
+        [field.name for field in fields(LinterConfig)]
+    )
+    parser.add_argument(
+        "--config-set",
+        nargs="+",
+        help="Set configuration options via key-value pairs "
+             "(do not put spaces before or after the = sign). "
+             "If a value contains spaces, you should define it with double "
+             "quotes: 'foo=\"this is an example\". "
+             f"Configuration options are: {config_options_str}."
+    )
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -57,6 +72,21 @@ def main():
         if args.quiet:
             return
         print(*func_args)
+
+    config = DEFAULT_CONFIG
+
+    if args.config_set is not None and len(args.config_set) > 0:
+        config_vars = parse_vars(args.config_set)
+
+        for key in config_vars:
+            if not hasattr(config, key):
+                log(
+                    f"Invalid configuration key provided: '{key}', "
+                    f"options are: {config_options_str}"
+                )
+                sys.exit(1)
+
+        config.set_values(config_vars)
 
     if args.verbose:
         log("Arguments:", args)

@@ -1,17 +1,15 @@
 """ Check if JSON keys are sorted """
-import json
-from typing import Optional
+from typing import Optional, Union
 
 from json_linter.config import LinterConfig
 
 
 def rule_keys_are_sorted(
-    data: str,
+    data: Union[dict, list],
     _config: LinterConfig
 ) -> (bool, Optional[str]):
     """ Check if JSON keys are sorted """
-    obj = json.loads(data)
-    return _are_keys_sorted(obj), None
+    return _are_keys_sorted(data), None
 
 
 def _are_keys_sorted(obj) -> bool:

@@ -1,0 +1,23 @@
+{
+    "my_key_is_great": {
+        "another_sub_key": [
+            "with some string values",
+            "that don't matter honestly",
+            {
+                "but_this_object_key_matters_again": true
+            },
+            {
+                "and_so_does_this_one": true,
+                "sub_values": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ]
+            }
+        ],
+        "my_sub_key_is_also_great": true
+    },
+    "thisstringshouldalwaysbeok": true
+}
