@@ -15,3 +15,4 @@ class LinterConfig:
     """ Configuration for the linter/fixer """
     indent: int
     naming_style: Optional[NamingStyle]
+    encoding: str

@@ -1,4 +1,3 @@
-import tempfile
 from pathlib import Path
 
 from json_linter.linter import lint_file, apply_fixes
@@ -21,6 +20,7 @@ def test_linting_fixtures():
     lint_fixture("keys-sorted-array.json", False)
     lint_fixture("keys-sorted-object.json", False)
     lint_fixture("keys-sorted-z-before-a.json", False)
+    lint_fixture("test-utf8.json", True)
 
 
 def test_fixing_fixtures():
@@ -33,3 +33,9 @@ def test_fixing_fixtures():
     fix_fixture("keys-sorted-array.json")
     fix_fixture("keys-sorted-object.json")
     fix_fixture("keys-sorted-z-before-a.json")
+
+
+def test_utf8_unchanged():
+    data = _fixture("test-utf8.json").read_text()
+    fixed_data = apply_fixes(data)
+    assert data == fixed_data

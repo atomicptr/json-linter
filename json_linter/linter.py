@@ -11,6 +11,7 @@ from json_linter.config import LinterConfig
 DEFAULT_CONFIG = LinterConfig(
     indent=4,
     naming_style=None,
+    encoding="utf-8",
 )
 
 
@@ -40,7 +41,7 @@ def lint_file(
     config: LinterConfig = DEFAULT_CONFIG
 ) -> List[LinterResult]:
     """ Lint a single file """
-    data = file_path.read_text()
+    data = file_path.read_text(encoding=config.encoding)
 
     results = []
 
@@ -79,7 +80,7 @@ def fix_file(file_path: Path, config: LinterConfig = DEFAULT_CONFIG) -> None:
     data = file_path.read_text()
     file_path.write_text(
         apply_fixes(data, config),
-        encoding="utf8",
+        encoding=config.encoding,
     )
 
 
@@ -94,4 +95,5 @@ def apply_fixes(data: str, config: LinterConfig = DEFAULT_CONFIG) -> str:
         obj,
         indent=config.indent,
         sort_keys=True,
+        ensure_ascii=False,
     )
