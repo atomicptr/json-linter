@@ -5,7 +5,7 @@ with open("README.md", "r") as file:
 
 setuptools.setup(
     name="json_linter",
-    version="1.1.0",
+    version="1.2.0",
     entry_points={
         "console_scripts": ["json-linter=json_linter.main:main"],
     },
