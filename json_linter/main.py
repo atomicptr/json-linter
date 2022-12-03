@@ -8,7 +8,7 @@ from json_linter.config import LinterConfig
 from json_linter.files import gather_files
 from json_linter.linter import fix, lint, LinterResult, DEFAULT_CONFIG
 from json_linter.utils import flatten, COLOR_RED, COLOR_GREEN, COLOR_RESET, \
-    parse_vars
+    parse_vars, print_header
 
 
 def main():
@@ -88,9 +88,6 @@ def main():
 
         config.set_values(config_vars)
 
-    if args.verbose:
-        log("Arguments:", args)
-
     files = flatten([
         gather_files(filename, flatten(args.extensions), args.recursive)
         for filename in flatten(args.filename)
@@ -99,10 +96,6 @@ def main():
     if len(files) == 0:
         log("No files found.")
         sys.exit(1)
-
-    if args.verbose and len(files) > 0:
-        files_str = "\n* ".join(map(str, files))
-        log(f"Files:\n* {files_str}")
 
     if args.fix:
         fix(files)
@@ -118,24 +111,44 @@ def main():
 
         if not result.was_successful:
             has_error = True
-            file_results[result.path].append(result)
 
-    if args.verbose and len(linter_results) > 0:
-        log("Results:")
+        file_results[result.path].append(result)
+
+    if not args.quiet:
+        print_header("json-linter")
+
+    if args.verbose:
+        log("Arguments:", args, "\n")
 
     for file in sorted(file_results.keys()):
-        has_issue = len(file_results[file]) > 0
-        list_item = "-" if has_issue else "+"
-
-        color = COLOR_RED if has_issue else COLOR_GREEN
-
-        log(f"{color}{list_item} {file}{COLOR_RESET}")
+        linter_markers = ""
 
         for result in file_results[file]:
+            color = COLOR_GREEN if result.was_successful else COLOR_RED
+            marker = "." if result.was_successful else "F"
+            linter_markers += f"{color}{marker}{COLOR_RESET}"
+
+        log(f"{file} {linter_markers}")
+
+        for result in file_results[file]:
+            if result.was_successful:
+                continue
+
             err_text = " (!)" if result.was_exception else ""
             message = "" if result.error_message is None else \
                 f": {result.error_message}"
             log(f"\t{COLOR_RED}{result.name}{message}{err_text}{COLOR_RESET}")
+
+    count_failures = 0
+    for result in linter_results:
+        if not result.was_successful:
+            count_failures += 1
+
+    if not args.quiet:
+        print_header(
+            f"{len(linter_results) - count_failures} / "
+            f"{len(linter_results)} passed", COLOR_GREEN
+        )
 
     if has_error:
         sys.exit(1)

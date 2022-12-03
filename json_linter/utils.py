@@ -1,8 +1,10 @@
 """ Utility functions """
+import os
 from importlib import import_module
+from math import floor
 from pathlib import Path
 from types import ModuleType
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 COLOR_GREEN = "\033[92m"
 COLOR_RED = "\033[91m"
@@ -57,3 +59,13 @@ def parse_vars(items: List[str]) -> Dict[str, str]:
         key, value = parse_var(item)
         result[key] = value
     return result
+
+
+def print_header(text: str, color: Optional[str] = None, sep: str = "="):
+    """ Print a header line with text in the middle """
+    size = os.get_terminal_size()
+    width_segment = floor((size.columns / 2) - (len(text) + 2) / 2)
+    segment = sep * width_segment
+    color_str = color if color is not None else ""
+    color_str_end = COLOR_RESET if color is not None else ""
+    print(f"{color_str}{segment} {text} {segment}{color_str_end}")
