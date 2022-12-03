@@ -1,6 +1,6 @@
 """ Lint/Fix files """
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import List, Optional
 
@@ -23,6 +23,13 @@ class LinterResult:
     was_successful: bool
     error_message: Optional[str]
     was_exception: bool
+
+    def to_dict(self):
+        """ Return linter result as a dictionary """
+        new_dict = {}
+        for field in fields(self):
+            new_dict[field.name] = getattr(self, field.name)
+        return new_dict
 
 
 def lint(

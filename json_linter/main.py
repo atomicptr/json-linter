@@ -1,12 +1,14 @@
 """ CLI for json_linter """
 import argparse
+import json
 import sys
 from dataclasses import fields
 from typing import List, Dict
 
 from json_linter.config import LinterConfig
 from json_linter.files import gather_files
-from json_linter.linter import fix, lint, LinterResult, DEFAULT_CONFIG
+from json_linter.linter import fix, lint, LinterResult, DEFAULT_CONFIG, \
+    apply_fixes
 from json_linter.utils import flatten, COLOR_RED, COLOR_GREEN, COLOR_RESET, \
     parse_vars, print_header
 
@@ -52,6 +54,11 @@ def main():
         help="fix and format files",
         action="store_true"
     )
+    parser.add_argument(
+        "--json",
+        help="print json instead of the regular output",
+        action="store_true"
+    )
     config_options_str = ", ".join(
         [field.name for field in fields(LinterConfig)]
     )
@@ -72,6 +79,9 @@ def main():
         if args.quiet:
             return
         print(*func_args)
+
+    if args.json:
+        args.quiet = True
 
     config = DEFAULT_CONFIG
 
@@ -149,6 +159,14 @@ def main():
             f"{len(linter_results) - count_failures} / "
             f"{len(linter_results)} passed", COLOR_GREEN
         )
+
+    if args.json:
+        result = {
+            "number_success": len(linter_results) - count_failures,
+            "number_total": len(linter_results),
+            "results": list(map(lambda res: res.to_dict(), linter_results))
+        }
+        print(apply_fixes(json.dumps(result)))
 
     if has_error:
         sys.exit(1)
