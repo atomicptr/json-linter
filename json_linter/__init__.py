@@ -1,5 +1,3 @@
 """ Package to lint and/or fix JSON files """
-import sys
-import os
-
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+from json_linter.config import *
+from json_linter.linter import *
