@@ -2,6 +2,7 @@
 from typing import Optional, Union
 
 from json_linter.config import LinterConfig
+from json_linter.utils import natural_keys
 
 
 def rule_keys_are_sorted(
@@ -31,4 +32,4 @@ def _are_keys_sorted(obj) -> bool:
 
         if isinstance(value, list) and not all(map(_are_keys_sorted, value)):
             return False
-    return sorted(keys) == keys
+    return sorted(keys, key=natural_keys) == keys

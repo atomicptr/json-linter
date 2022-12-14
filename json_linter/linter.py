@@ -97,12 +97,7 @@ def fix(files: List[Path], config: LinterConfig = DEFAULT_CONFIG) -> None:
 def fix_file(file_path: Path, config: LinterConfig = DEFAULT_CONFIG) -> None:
     """ Fix a single file """
     data = file_path.read_text()
-    data = apply_fixes(data, config)
-
-    if config.append_empty_line:
-        data = f"{apply_fixes(data, config)}\n"
-
-    file_path.write_text(data,encoding=config.encoding)
+    file_path.write_text(apply_fixes(data, config), encoding=config.encoding)
 
 
 def apply_fixes(data: str, config: LinterConfig = DEFAULT_CONFIG) -> str:
@@ -112,9 +107,13 @@ def apply_fixes(data: str, config: LinterConfig = DEFAULT_CONFIG) -> str:
 
     obj = json.loads(data)
 
-    return json.dumps(
+    res = json.dumps(
         obj,
         indent=config.indent,
-        sort_keys=True,
         ensure_ascii=False,
     )
+
+    if config.append_empty_line:
+        return f"{res}\n"
+
+    return res

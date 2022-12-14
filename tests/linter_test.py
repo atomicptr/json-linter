@@ -23,9 +23,11 @@ def test_linting_fixtures():
         assert _did_any_rule_fail(results) == success
 
     lint_fixture("fixed-keys-sorted-array.json", True)
+    lint_fixture("fixed-keys-sorted-numeric-key.json", True)
     lint_fixture("fixed-keys-sorted-object.json", True)
     lint_fixture("fixed-keys-sorted-z-before-a.json", True)
     lint_fixture("keys-sorted-array.json", False)
+    lint_fixture("keys-sorted-numeric-key.json", False)
     lint_fixture("keys-sorted-object.json", False)
     lint_fixture("keys-sorted-z-before-a.json", False)
     lint_fixture("test-utf8.json", True)
@@ -36,9 +38,12 @@ def test_fixing_fixtures():
         data = _fixture(fixture).read_text()
         fixed = _fixture(f"fixed-{fixture}").read_text()
         data_fixed = apply_fixes(data)
+        print("Reference", f"\n{fixed}")
+        print("After Fixes", f"\n{data_fixed}")
         assert data_fixed == fixed
 
     fix_fixture("keys-sorted-array.json")
+    fix_fixture("keys-sorted-numeric-key.json")
     fix_fixture("keys-sorted-object.json")
     fix_fixture("keys-sorted-z-before-a.json")
 

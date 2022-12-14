@@ -1,10 +1,11 @@
 """ Utility functions """
 import os
+import re
 from importlib import import_module
 from math import floor
 from pathlib import Path
 from types import ModuleType
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 
 COLOR_GREEN = "\033[92m"
 COLOR_RED = "\033[91m"
@@ -76,3 +77,13 @@ def print_header(text: str, color: Optional[str] = None, sep: str = "="):
     color_str = color if color is not None else ""
     color_str_end = COLOR_RESET if color is not None else ""
     print(f"{color_str}{segment} {text} {segment}{color_str_end}")
+
+
+def text_to_int(text: str) -> Union[str, int]:
+    """ Convert text to integer if its a number """
+    return int(text) if text.isdigit() else text
+
+
+def natural_keys(text: str):
+    """ Allow sorting keys naturally """
+    return [text_to_int(c) for c in re.split(r"(\d+)", text)]
