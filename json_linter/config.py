@@ -10,12 +10,24 @@ NamingStyle = Enum("NamingStyle", [
 ])
 
 
+def _parse_boolean_value(value: str) -> bool:
+    if value in ("true", "True", "1"):
+        return True
+    if value in ("false", "False", "0"):
+        return False
+    raise ValueError(
+        "Expected boolean value expression like true,True,1,false,False,0 "
+        f"received \"{value}\" instead."
+    )
+
+
 @dataclass
 class LinterConfig:
     """ Configuration for the linter/fixer """
     indent: int
     naming_style: Optional[NamingStyle]
     encoding: str
+    append_empty_line: bool
 
     def set_values(self, values: Dict[str, str]):
         """ Set config values by dict, also does some validation """
@@ -36,5 +48,9 @@ class LinterConfig:
                     )
                 self.naming_style = NamingStyle[value]
                 continue
+            if key == "append_empty_line":
+                self.append_empty_line = _parse_boolean_value(value)
+                continue
 
             setattr(self, key, value)
+        print(self)
