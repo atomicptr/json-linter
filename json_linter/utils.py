@@ -63,8 +63,15 @@ def parse_vars(items: List[str]) -> Dict[str, str]:
 
 def print_header(text: str, color: Optional[str] = None, sep: str = "="):
     """ Print a header line with text in the middle """
-    size = os.get_terminal_size()
-    width_segment = floor((size.columns / 2) - (len(text) + 2) / 2)
+
+    width_segment = 80
+
+    try:
+        size = os.get_terminal_size()
+        width_segment = floor((size.columns / 2) - (len(text) + 2) / 2)
+    except OSError:
+        pass
+
     segment = sep * width_segment
     color_str = color if color is not None else ""
     color_str_end = COLOR_RESET if color is not None else ""
